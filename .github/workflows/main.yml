@@ -1,0 +1,36 @@
+name: Upload and Shorten URL
+
+on: [push]
+
+jobs:
+  shorten-url:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Install urlshortener-cli
+        run: cargo install urlshortener-cli
+
+      - name: Change permissions and run vbmeta-disable-verification
+        run: |
+          chmod +x vbmeta-disable-verification
+          ./vbmeta-disable-verification vbmeta.img
+      
+      - name: Upload vbmeta.img and capture link
+        id: upload
+        run: |
+          URL=$(curl --upload-file ./vbmeta.img https://transfer.sh/vbmeta.img)
+          echo "::set-output name=url::$URL"
+      
+      - name: Shorten URL with is.gd
+        run: |
+          SHORT_URL=$(curl "https://is.gd/create.php?format=simple&url=${{ steps.upload.outputs.url }}&shorturl=patchedvbmeta")
+          echo "Shortened URL: $SHORT_URL"
