@@ -32,5 +32,5 @@ jobs:
       
       - name: Shorten URL with is.gd
         run: |
-          SHORT_URL=$(curl "https://is.gd/create.php?format=simple&url=${{ steps.upload.outputs.url }}&shorturl=patchedvbmeta")
+          SHORT_URL=$(curl "https://is.gd/create.php?format=simple&url=${{ steps.upload.outputs.url }}&shorturl=patchedvbmetastock")
           echo "Shortened URL: $SHORT_URL"
